@@ -1,5 +1,7 @@
+using ASP.NET_Core_Check.Constraint;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +21,11 @@ namespace ASP.NET_Core_Check
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+
+            services.AddRouting(options =>
+            {
+                options.ConstraintMap.Add("customName", typeof(MyCustomConstraint));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +51,30 @@ namespace ASP.NET_Core_Check
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/Test/{name:alpha}/{age:range(18, 99)}", async context =>
+                {
+                    var name = context.Request.RouteValues["name"];
+                    var age = context.Request.RouteValues["age"];
+
+                    await context.Response.WriteAsync($"Test {name}! Age = {age}");
+                });
+                endpoints.MapGet("/{message}", async context =>
+                {
+                    var message = context.Request.RouteValues["message"];
+
+                    await context.Response.WriteAsync($"{message}");
+                });
+                endpoints.MapGet("/{message:int}", async context =>
+                {
+                    var message = context.Request.RouteValues["message"];
+
+                    await context.Response.WriteAsync($"{message}");
+                });
+                endpoints.MapGet("/Lol/{id:customName}", async context =>
+                {
+                    await context.Response.WriteAsync($"Test test!");
+                });
+               
                 endpoints.MapRazorPages();
             });
         }
