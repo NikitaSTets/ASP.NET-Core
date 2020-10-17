@@ -1,7 +1,10 @@
 using ASP.NET_Core_Check.Constraint;
+using ASP.NET_Core_Check.ParameterTransformers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +28,8 @@ namespace ASP.NET_Core_Check
             services.AddRouting(options =>
             {
                 options.ConstraintMap.Add("customName", typeof(MyCustomConstraint));
+
+                options.ConstraintMap["slugify"] = typeof(SlugifyParameterTransformer);
             });
         }
 
@@ -33,7 +38,21 @@ namespace ASP.NET_Core_Check
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+
+                //app.UseExceptionHandler("/Home/Error");
+
+                app.UseExceptionHandler(errorApp =>
+                {
+                    errorApp.Run(async context =>
+                    {
+                        var errorFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                        var exception = errorFeature.Error; //you may want to check what
+                        //the exception is
+                        var path = errorFeature.Path;
+                        await context.Response.WriteAsync("Error: " + exception.Message);
+                    });
+                });
             }
             else
             {
@@ -51,6 +70,13 @@ namespace ASP.NET_Core_Check
 
             app.UseEndpoints(endpoints =>
             {
+                //for mapping when work only with route attributes
+                //endpoints.MapControllers();
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller:slugify=Home}/{action:slugify=Index}/{id?}");
+
                 endpoints.MapGet("/Test/{name:alpha}/{age:range(18, 99)}", async context =>
                 {
                     var name = context.Request.RouteValues["name"];
@@ -58,23 +84,41 @@ namespace ASP.NET_Core_Check
 
                     await context.Response.WriteAsync($"Test {name}! Age = {age}");
                 });
+
                 endpoints.MapGet("/{message}", async context =>
                 {
                     var message = context.Request.RouteValues["message"];
 
                     await context.Response.WriteAsync($"{message}");
                 });
+
                 endpoints.MapGet("/{message:int}", async context =>
                 {
                     var message = context.Request.RouteValues["message"];
 
                     await context.Response.WriteAsync($"{message}");
                 });
+
                 endpoints.MapGet("/Lol/{id:customName}", async context =>
                 {
                     await context.Response.WriteAsync($"Test test!");
                 });
-               
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "admin",
+                    pattern: "admin/{controller}/{action=Index}");
+
+                endpoints.MapAreaControllerRoute(
+                    name: "store_area",
+                    areaName: "service",
+                    pattern: "service/{controller=Home}/{action=Index}/{id?}");
+
+                //endpoints.MapFallbackToPage("/Privacy");
+
                 endpoints.MapRazorPages();
             });
         }

@@ -5,6 +5,15 @@
     <RootNamespace>ASP.NET_Core_Check</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Service\Data\" />
+    <Folder Include="Areas\Service\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+  </ItemGroup>
+
 
 
 </Project>
