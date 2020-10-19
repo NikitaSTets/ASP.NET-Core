@@ -1,4 +1,6 @@
 ﻿using System;
+using ASP.NET_Core_Check.Filters;
+using ASP.NET_Core_Check.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASP.NET_Core_Check.Areas.Service.Controllers
@@ -15,6 +17,12 @@ namespace ASP.NET_Core_Check.Areas.Service.Controllers
         {
             throw new Exception();
             return View();
+        }
+
+        [ServiceFilter(typeof(LogFilterAttribute), Order = 1)]
+        public IActionResult LogFilterTest()
+        {
+            return Ok(1);
         }
     }
 }

@@ -1,4 +1,5 @@
 using ASP.NET_Core_Check.Constraint;
+using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.ParameterTransformers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -23,7 +24,12 @@ namespace ASP.NET_Core_Check
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddRazorPages(options =>
+            {
+                //options.Conventions.AddFolderApplicationModelConvention(
+                //    "/Movie",
+                //    model => model.Filters.Add(new CustomPageFilter()));
+            });
 
             services.AddRouting(options =>
             {
@@ -31,6 +37,8 @@ namespace ASP.NET_Core_Check
 
                 options.ConstraintMap["slugify"] = typeof(SlugifyParameterTransformer);
             });
+
+            services.AddSingleton<LogFilterAttribute>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
