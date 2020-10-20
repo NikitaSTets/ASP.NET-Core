@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Threading.Tasks;
 
 namespace ASP.NET_Core_Check.Filters
 {

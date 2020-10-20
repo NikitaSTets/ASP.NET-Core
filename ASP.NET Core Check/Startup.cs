@@ -29,7 +29,7 @@ namespace ASP.NET_Core_Check
                 //options.Conventions.AddFolderApplicationModelConvention(
                 //    "/Movie",
                 //    model => model.Filters.Add(new CustomPageFilter()));
-            });
+            }).AddXmlSerializerFormatters();
 
             services.AddRouting(options =>
             {

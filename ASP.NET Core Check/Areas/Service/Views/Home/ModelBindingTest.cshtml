@@ -1,0 +1,26 @@
+﻿@model ASP.NET_Core_Check.Models.ModelBindingTestModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Movie</title>
+    @using (Html.BeginForm("ModelBindingTest", "Home", FormMethod.Post))
+    {
+        <p>
+            <label>Имя</label><br />
+            @Html.TextBox("TestString")
+        </p>
+        <p>
+            <label>Возраст</label><br />
+            @Html.TextBox("TestInt", "", new { type = "number" })
+        </p>
+        <p>
+            <input type="submit" value="Отправить" />
+        </p>
+    }
+</head>
+<body>
+</body>
+</html>
