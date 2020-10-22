@@ -1,0 +1,26 @@
+﻿@model ASP.NET_Core_Check.Models.ModelValidationModel
+
+@{
+    ViewBag.Title = "Make A Booking";
+}
+<h4>Book an Appointment</h4>
+@using (Html.BeginForm("Test", "Test", FormMethod.Post))
+{
+    @Html.ValidationSummary()
+
+    <p>
+    <p>@Html.ValidationMessageFor(m => m.ClientName)</p>
+
+    Your name: @Html.EditorFor(m => m.ClientName)
+    </p>
+    <p>
+        Appointment Date: @Html.EditorFor(m => m.Date)
+    </p>
+    <p>
+        Email: @Html.EditorFor(m => m.Email)
+    </p>
+    <p>
+        @Html.EditorFor(m => m.Preorder) I accept the terms & conditions
+    </p>
+    <input id="btnSubmit" type="submit" value="Submit" />
+}

@@ -29,7 +29,15 @@ namespace ASP.NET_Core_Check
                 //options.Conventions.AddFolderApplicationModelConvention(
                 //    "/Movie",
                 //    model => model.Filters.Add(new CustomPageFilter()));
-            }).AddXmlSerializerFormatters();
+            })
+                //.AddXmlSerializerFormatters()
+                .AddMvcOptions(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                    options.MaxModelValidationErrors = 50;
+                    options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
+                        _ => "The field is required.");
+                }); ;
 
             services.AddRouting(options =>
             {
@@ -71,6 +79,8 @@ namespace ASP.NET_Core_Check
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseMvc();
 
             app.UseRouting();
 

@@ -1,0 +1,32 @@
+﻿@model ASP.NET_Core_Check.Models.ModelValidationModel
+
+@{
+    ViewBag.Title = "Make A Booking";
+}
+<head>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</head>
+<h4>Book an Appointment</h4>
+@using (Html.BeginForm("Test","Test"))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+
+    <p>
+    <p>@Html.ValidationMessageFor(m => m.ClientName)</p>
+
+    Your name: @Html.EditorFor(m => m.ClientName)
+    </p>
+    <p>
+        Appointment Date: @Html.EditorFor(m => m.Date)
+    </p>
+    <p>
+        Email: @Html.EditorFor(m => m.Email)
+    </p>
+    <p>
+        @Html.EditorFor(m => m.Preorder) I accept the terms & conditions
+    </p>
+    <input type="submit" value="Make Booking" />
+}

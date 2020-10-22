@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASP.NET_Core_Check.Areas.Service.Controllers
@@ -37,6 +38,23 @@ namespace ASP.NET_Core_Check.Areas.Service.Controllers
         [HttpPost]
         public IActionResult ModelBindingTestBind([FromBody]TestBindAttributeModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                throw new Exception("Invalid model");
+            }
+            return View("Home/Test");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult ModelValidation([FromBody]ModelValidationModel model)
+        {
+            //model.Description = "Dsa";
+            //model.Title = "dsa";
+            if (!TryValidateModel(model, nameof(ModelValidationModel)))
+            {
+                return View("Home/Test");
+            }
             if (!ModelState.IsValid)
             {
                 throw new Exception("Invalid model");
