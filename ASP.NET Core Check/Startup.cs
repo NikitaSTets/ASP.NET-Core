@@ -1,11 +1,12 @@
+using System;
 using ASP.NET_Core_Check.Constraint;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.ParameterTransformers;
+using ASP.NET_Core_Check.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,9 +22,20 @@ namespace ASP.NET_Core_Check
 
         public IConfiguration Configuration { get; }
 
+        private static void HandleBranch(IApplicationBuilder app)
+        {
+            app.Run(async context =>
+            {
+                var branchVer = context.Request.Query["branch"];
+                await context.Response.WriteAsync($"Branch used = {branchVer}");
+            });
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //for test CaptureStartupErrors
+            //throw new Exception();
             services.AddRazorPages(options =>
             {
                 //options.Conventions.AddFolderApplicationModelConvention(
@@ -37,7 +49,7 @@ namespace ASP.NET_Core_Check
                     options.MaxModelValidationErrors = 50;
                     options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
                         _ => "The field is required.");
-                }); ;
+                });
 
             services.AddRouting(options =>
             {
@@ -47,11 +59,25 @@ namespace ASP.NET_Core_Check
             });
 
             services.AddSingleton<LogFilterAttribute>();
+
+            services.AddHostedService<LifetimeEventsHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //app.Run(async (context) =>
+            //{
+            //    await context.Response.WriteAsync("Hello World From 2nd Middleware");
+            //});
+
+            //app.Use(async (context, next) =>
+            //{
+            //    await context.Response.WriteAsync("Hello World From 1st Middleware!");
+
+            //    await next();
+            //});
+
             if (env.IsDevelopment())
             {
                 //app.UseDeveloperExceptionPage();
@@ -82,6 +108,8 @@ namespace ASP.NET_Core_Check
 
             app.UseMvc();
 
+            app.MapWhen(context => context.Request.Query.ContainsKey("branch"), HandleBranch);
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -103,12 +131,12 @@ namespace ASP.NET_Core_Check
                     await context.Response.WriteAsync($"Test {name}! Age = {age}");
                 });
 
-                endpoints.MapGet("/{message}", async context =>
-                {
-                    var message = context.Request.RouteValues["message"];
+                //endpoints.MapGet("/{message}", async context =>
+                //{
+                //    var message = context.Request.RouteValues["message"];
 
-                    await context.Response.WriteAsync($"{message}");
-                });
+                //    await context.Response.WriteAsync($"{message}");
+                //});
 
                 endpoints.MapGet("/{message:int}", async context =>
                 {

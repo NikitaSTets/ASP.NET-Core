@@ -1,7 +1,7 @@
-﻿{
+{
   "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:55577",
       "sslPort": 44363
@@ -12,16 +12,20 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "TestPrefix_CONTENTROOT": "Value",
+        "TestPrefix_CAPTURESTARTUPERRORS": "True",
+        "TestPrefix_ENVIRONMENT": "Development",
+        "TestPrefix_APPLICATIONNAME": "TestName",
+        "TestPrefix_SHUTDOWNTIMEOUTSECONDS": "10"
       }
     },
     "ASP.NET_Core_Check": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
   }
 }
