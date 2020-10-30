@@ -1,0 +1,20 @@
+﻿@using ASP.NET_Core_Check.Controllers
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@using (Html.BeginForm(nameof(AccountController.PerformLogin), "Account", FormMethod.Post))
+{
+    <fieldset>
+        <p>Username:</p>
+        <p><input type="text" name="username" /></p>
+        <p>Password:</p>
+        <p><input type="password" name="password" /></p>
+        <p>
+            Remember me: <input type="checkbox" name="isPersistent"
+                                value="true" />
+        </p>
+        <input type="hidden" name="ReturnUrl" value="@Context.Request.Query[" ReturnUrl"]" />
+        <button>Login</button>
+    </fieldset>
+}

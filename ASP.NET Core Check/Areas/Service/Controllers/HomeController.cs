@@ -12,6 +12,7 @@ namespace ASP.NET_Core_Check.Areas.Service.Controllers
     {
         public string ControllerProperty { get; set; }
 
+        [Authorize]
         public IActionResult Index()
         {
             return View();

@@ -1,12 +1,17 @@
 using System;
 using ASP.NET_Core_Check.Constraint;
 using ASP.NET_Core_Check.Filters;
+using ASP.NET_Core_Check.Infrastructure;
+using ASP.NET_Core_Check.Models;
 using ASP.NET_Core_Check.ParameterTransformers;
 using ASP.NET_Core_Check.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -61,6 +66,52 @@ namespace ASP.NET_Core_Check
             services.AddSingleton<LogFilterAttribute>();
 
             services.AddHostedService<LifetimeEventsHostedService>();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options
+                    =>
+                {
+                    options.LoginPath = "/Account/Login/";
+                    options.AccessDeniedPath = "/Account/Forbidden/";
+                    options.LogoutPath = "/Account/Logout";
+                    options.ReturnUrlParameter = "ReturnUrl";
+                });
+
+            //services.AddIdentity<ApplicationUser, ApplicationRole>() //adds core functionality
+            //    .AddDefaultUI() //adds self-contained Razor Pages UI in
+            //                    // an area called /Identity
+            //    .AddDefaultTokenProviders(); //for generating tokens for new
+            // passwords, resetting operations
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
+                .AddIdentity<ApplicationUser, ApplicationRole>(options =>
+                 {
+                     options.SignIn.RequireConfirmedAccount = false;
+                     options.Password.RequireDigit = false;
+                     options.Password.RequireLowercase = false;
+                     options.Password.RequiredUniqueChars = 0;
+                     options.Password.RequiredLength = 0;
+                     options.Password.RequireNonAlphanumeric = false;
+                     options.Password.RequireUppercase = false;
+                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                     options.Lockout.MaxFailedAccessAttempts = 10;
+                 })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.SlidingExpiration = true;
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/Forbidden";
+                options.LogoutPath = "/Account/Logout";
+                options.ReturnUrlParameter = "ReturnUrl";
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,6 +162,8 @@ namespace ASP.NET_Core_Check
             app.MapWhen(context => context.Request.Query.ContainsKey("branch"), HandleBranch);
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
@@ -163,6 +216,9 @@ namespace ASP.NET_Core_Check
                     areaName: "service",
                     pattern: "service/{controller=Home}/{action=Index}/{id?}");
 
+                endpoints.MapControllerRoute(
+                    name: "identity",
+                    pattern: "identity/{controller}/{action=Index}");
                 //endpoints.MapFallbackToPage("/Privacy");
 
                 endpoints.MapRazorPages();

@@ -12,7 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "TestPrefix_CONTENTROOT": "Value",
+        "TestPrefix1_CONTENTROOT": "Value",
         "TestPrefix_CAPTURESTARTUPERRORS": "True",
         "TestPrefix_ENVIRONMENT": "Development",
         "TestPrefix_APPLICATIONNAME": "TestName",
