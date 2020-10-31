@@ -2,6 +2,7 @@ using System;
 using ASP.NET_Core_Check.Constraint;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.Infrastructure;
+using ASP.NET_Core_Check.Middlewares;
 using ASP.NET_Core_Check.Models;
 using ASP.NET_Core_Check.ParameterTransformers;
 using ASP.NET_Core_Check.Services;
@@ -160,6 +161,8 @@ namespace ASP.NET_Core_Check
             app.UseMvc();
 
             app.MapWhen(context => context.Request.Query.ContainsKey("branch"), HandleBranch);
+
+            app.UseMiddleware<TestTokenMiddleware>();
 
             app.UseRouting();
 
