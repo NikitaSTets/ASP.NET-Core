@@ -12,10 +12,10 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "TestPrefix1_APPLICATIONNAME": "TestName",
         "TestPrefix1_CONTENTROOT": "Value",
         "TestPrefix_CAPTURESTARTUPERRORS": "True",
         "TestPrefix_ENVIRONMENT": "Development",
-        "TestPrefix_APPLICATIONNAME": "TestName",
         "TestPrefix_SHUTDOWNTIMEOUTSECONDS": "10"
       }
     },

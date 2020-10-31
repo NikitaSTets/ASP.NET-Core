@@ -14,6 +14,14 @@ namespace ASP.NET_Core_Check
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseSetting("https_port", "8080");
+                    webBuilder.UseUrls("http://*:5000;http://localhost:5001;https://hostname:5002");
+                    webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "CustomApplicationName");
+
+                    webBuilder.UseStartup<Startup>();
+                })
                 .ConfigureHostConfiguration(configHost =>
                 {
                     configHost.AddJsonFile("hostsettings.json", optional: true);
@@ -24,21 +32,12 @@ namespace ASP.NET_Core_Check
                     config.Properties.Add("applicationName", "te");
                     config.AddEnvironmentVariables("TestPrefix_");
 
+                    //TODO Remove, cause the same with default
                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-
                     var a = new[] { "SomeValue=321", "ValueTest=4" };
                     config.AddCommandLine(a);
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseSetting("https_port", "8080");
-                    webBuilder.UseUrls("http://*:5000;http://localhost:5001;https://hostname:5002");
-                    webBuilder.UseSetting("applicationName", "test");
-                    webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "CustomApplicationName");
-
-                    webBuilder.UseStartup<Startup>();
                 });
     }
 }
