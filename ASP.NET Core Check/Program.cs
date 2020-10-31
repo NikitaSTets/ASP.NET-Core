@@ -32,10 +32,6 @@ namespace ASP.NET_Core_Check
                     config.Properties.Add("applicationName", "te");
                     config.AddEnvironmentVariables("TestPrefix_");
 
-                    //TODO Remove, cause the same with default
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
                     var a = new[] { "SomeValue=321", "ValueTest=4" };
                     config.AddCommandLine(a);
                 });
