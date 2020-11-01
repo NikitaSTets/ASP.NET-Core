@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using ASP.NET_Core_Check.Constraint;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.HealthCheck;
@@ -10,16 +12,19 @@ using ASP.NET_Core_Check.Models;
 using ASP.NET_Core_Check.ParameterTransformers;
 using ASP.NET_Core_Check.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 namespace ASP.NET_Core_Check
@@ -99,7 +104,7 @@ namespace ASP.NET_Core_Check
                 options.Delay = TimeSpan.FromSeconds(2);
                 options.Predicate = (check) => check.Tags.Contains("ready");
             });
-            
+
             services.AddSingleton<IHealthCheckPublisher, ReadinessPublisher>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -130,6 +135,8 @@ namespace ASP.NET_Core_Check
                 options.LogoutPath = "/Account/Logout";
                 options.ReturnUrlParameter = "ReturnUrl";
             });
+
+            services.AddDirectoryBrowser();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -173,7 +180,14 @@ namespace ASP.NET_Core_Check
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+
+            //For testing default static page
+            //var options = new DefaultFilesOptions();
+            ////options.DefaultFileNames.Clear();
+            //options.DefaultFileNames.Insert(0, "mydefault.html");
+            //app.UseDefaultFiles(options);
+
+            //app.UseFileServer(enableDirectoryBrowsing: true); //UseDefaultFiles + UseStaticFiles
 
             app.UseMvc();
 
@@ -186,6 +200,46 @@ namespace ASP.NET_Core_Check
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseStaticFiles();
+
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".myapp"] = "application/x-msdownload";
+            provider.Mappings[".htm3"] = "text/html";
+            provider.Mappings[".image"] = "image/png";
+            // Replace an existing mapping
+            provider.Mappings[".rtf"] = "application/x-msdownload";
+            // Remove MP4 videos.
+            provider.Mappings.Remove(".mp4");
+
+            const string cacheMaxAge = "604800";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "MyStaticFiles")),
+                RequestPath = "/StaticFiles",
+                ContentTypeProvider = provider,
+                OnPrepareResponse = ctx =>
+                {
+                    //if (!ctx.Context.User.Identity.IsAuthenticated)
+                    //{
+                    //    // respond HTTP 401 Unauthorized.
+                    //    ctx.Context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    //    ctx.Context.Response.ContentLength = 0;
+                    //    ctx.Context.Response.Body = Stream.Null;
+                    //}
+                    //else
+                    //{
+                    ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cacheMaxAge}");
+                    //}
+                }
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "MyStaticFiles/Images")),
+                RequestPath = "/MyImages"
+            });
 
             app.UseEndpoints(endpoints =>
             {

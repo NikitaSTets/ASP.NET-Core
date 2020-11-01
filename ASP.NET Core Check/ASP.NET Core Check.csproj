@@ -7,6 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MyStaticFiles\css\site.css" />
+    <None Remove="MyStaticFiles\Images\red-rose.jpg" />
+    <None Remove="MyStaticFiles\Images\rose.image" />
+    <None Remove="MyStaticFiles\red-rose.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MyStaticFiles\css\site.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="MyStaticFiles\Images\rose.image" />
+    <Content Include="MyStaticFiles\Images\red-rose.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Areas\Service\Data\" />
     <Folder Include="Areas\Service\Models\" />
   </ItemGroup>
