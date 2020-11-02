@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Serialization;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +11,6 @@ namespace ASP.NET_Core_Check.Areas.Service.Controllers
     {
         public string ControllerProperty { get; set; }
 
-        [Authorize]
         public IActionResult Index()
         {
             return View();
