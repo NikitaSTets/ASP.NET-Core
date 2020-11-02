@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using ASP.NET_Core_Check.Constraint;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.HealthCheck;
@@ -11,8 +9,7 @@ using ASP.NET_Core_Check.Middlewares;
 using ASP.NET_Core_Check.Models;
 using ASP.NET_Core_Check.ParameterTransformers;
 using ASP.NET_Core_Check.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -77,16 +74,7 @@ namespace ASP.NET_Core_Check
             services.AddSingleton<LogFilterAttribute>();
 
             services.AddHostedService<LifetimeEventsHostedService>();
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options
-                    =>
-                {
-                    options.LoginPath = "/Account/Login/";
-                    options.AccessDeniedPath = "/Account/Forbidden/";
-                    options.LogoutPath = "/Account/Logout";
-                    options.ReturnUrlParameter = "ReturnUrl";
-                });
+            
             services.AddHostedService<StartupHostedService>();
             services.AddSingleton<StartupHostedServiceHealthCheck>();
 
@@ -124,17 +112,6 @@ namespace ASP.NET_Core_Check
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                options.SlidingExpiration = true;
-                options.LoginPath = "/Account/Login";
-                options.AccessDeniedPath = "/Account/Forbidden";
-                options.LogoutPath = "/Account/Logout";
-                options.ReturnUrlParameter = "ReturnUrl";
-            });
 
             services.AddDirectoryBrowser();
         }
@@ -202,7 +179,7 @@ namespace ASP.NET_Core_Check
             app.UseAuthorization();
 
             app.UseStaticFiles();
-
+            
             var provider = new FileExtensionContentTypeProvider();
             // Add new mappings
             provider.Mappings[".myapp"] = "application/x-msdownload";
