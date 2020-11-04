@@ -98,20 +98,19 @@ namespace ASP.NET_Core_Check
             services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
                 .AddIdentity<ApplicationUser, ApplicationRole>(options =>
-                 {
-                     options.SignIn.RequireConfirmedAccount = false;
-                     options.Password.RequireDigit = false;
-                     options.Password.RequireLowercase = false;
-                     options.Password.RequiredUniqueChars = 0;
-                     options.Password.RequiredLength = 0;
-                     options.Password.RequireNonAlphanumeric = false;
-                     options.Password.RequireUppercase = false;
-                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                     options.Lockout.MaxFailedAccessAttempts = 10;
-                 })
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequiredLength = 0;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                    options.Lockout.MaxFailedAccessAttempts = 10;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultUI()
-                .AddDefaultTokenProviders();
+                .AddDefaultUI();
 
             services.AddDirectoryBrowser();
         }
