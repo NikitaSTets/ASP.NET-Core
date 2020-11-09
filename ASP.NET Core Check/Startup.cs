@@ -74,7 +74,7 @@ namespace ASP.NET_Core_Check
             services.AddSingleton<LogFilterAttribute>();
 
             services.AddHostedService<LifetimeEventsHostedService>();
-            
+
             services.AddHostedService<StartupHostedService>();
             services.AddSingleton<StartupHostedServiceHealthCheck>();
 
@@ -111,6 +111,12 @@ namespace ASP.NET_Core_Check
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultUI();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
+                options.AddPolicy("Founders", policy => policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
+            });
 
             services.AddDirectoryBrowser();
         }
@@ -178,7 +184,7 @@ namespace ASP.NET_Core_Check
             app.UseAuthorization();
 
             app.UseStaticFiles();
-            
+
             var provider = new FileExtensionContentTypeProvider();
             // Add new mappings
             provider.Mappings[".myapp"] = "application/x-msdownload";
