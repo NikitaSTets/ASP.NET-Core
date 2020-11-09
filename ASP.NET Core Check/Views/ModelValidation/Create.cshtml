@@ -1,0 +1,17 @@
+﻿@model ASP.NET_Core_Check.Models.ClientSideValidationModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+@using (Html.BeginForm("Create", "ModelValidation"))
+{
+    @Html.ValidationSummary()
+    <div>
+        @Html.LabelFor(m => m.Name)
+        @Html.EditorFor(m => m.Name)
+    </div>
+
+    <button type="submit">Submit</button>
+}
