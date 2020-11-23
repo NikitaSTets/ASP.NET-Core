@@ -15,7 +15,7 @@
         "TestPrefix1_APPLICATIONNAME": "TestName",
         "TestPrefix1_CONTENTROOT": "Value",
         "TestPrefix_CAPTURESTARTUPERRORS": "True",
-        "TestPrefix_ENVIRONMENT": "Development",
+        "TestPrefix_ENVIRONMENT": "Testing",
         "TestPrefix_SHUTDOWNTIMEOUTSECONDS": "10"
       }
     },

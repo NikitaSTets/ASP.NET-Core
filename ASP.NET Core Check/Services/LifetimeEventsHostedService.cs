@@ -40,6 +40,7 @@ namespace ASP.NET_Core_Check.Services
 
         private void OnStarted()
         {
+            var a = _hostEnvironment.EnvironmentName;
             _logger.LogInformation($"{_hostEnvironment.ApplicationName} OnStarted has been called. ");
             // Perform post-startup activities here
         }

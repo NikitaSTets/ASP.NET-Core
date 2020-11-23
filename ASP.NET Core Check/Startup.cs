@@ -44,7 +44,7 @@ namespace ASP.NET_Core_Check
             });
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             //for test CaptureStartupErrors
@@ -121,7 +121,6 @@ namespace ASP.NET_Core_Check
             services.AddDirectoryBrowser();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //app.Run(async (context) =>
@@ -136,7 +135,7 @@ namespace ASP.NET_Core_Check
             //    await next();
             //});
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsEnvironment("Testing"))
             {
                 //app.UseDeveloperExceptionPage();
 
@@ -305,5 +304,153 @@ namespace ASP.NET_Core_Check
                 endpoints.MapRazorPages();
             });
         }
+
+        #region Testing
+
+        public void ConfigureTestingServices(IServiceCollection services)
+        {
+            //for test CaptureStartupErrors
+            //throw new Exception();
+            services.AddRazorPages(options =>
+            {
+                //options.Conventions.AddFolderApplicationModelConvention(
+                //    "/Movie",
+                //    model => model.Filters.Add(new CustomPageFilter()));
+            });
+        }
+
+
+        public void ConfigureTesting(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var errorFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                    var exception = errorFeature.Error; //you may want to check what
+                                                        //the exception is
+                        var path = errorFeature.Path;
+                    await context.Response.WriteAsync("Error: " + exception.Message);
+                });
+            });
+
+            app.UseHttpsRedirection();
+
+            app.UseMvc();
+
+            app.MapWhen(context => context.Request.Query.ContainsKey("branch"), HandleBranch);
+
+            app.UseMiddleware<TestTokenMiddleware>();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
+            app.UseStaticFiles();
+
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".myapp"] = "application/x-msdownload";
+            provider.Mappings[".htm3"] = "text/html";
+            provider.Mappings[".image"] = "image/png";
+            // Replace an existing mapping
+            provider.Mappings[".rtf"] = "application/x-msdownload";
+            // Remove MP4 videos.
+            provider.Mappings.Remove(".mp4");
+
+            const string cacheMaxAge = "604800";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "MyStaticFiles")),
+                RequestPath = "/StaticFiles",
+                ContentTypeProvider = provider,
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cacheMaxAge}");
+                }
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "MyStaticFiles/Images")),
+                RequestPath = "/MyImages"
+            });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions
+                {
+                    Predicate = (check) => check.Tags.Contains("foo_tag")
+                                           || check.Tags.Contains("baz_tag")
+                                           || check.Tags.Contains("example_tag"),
+                    ResultStatusCodes =
+                    {
+                        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+                    },
+                    ResponseWriter = ResponseWriters.WriteResponse
+                })
+                    .RequireHost("localhost:44363");
+
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
+                {
+                    Predicate = (check) => check.Tags.Contains("ready"),
+                });
+
+                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions
+                {
+                    Predicate = (_) => false
+                });
+
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller:slugify=Home}/{action:slugify=Index}/{id?}");
+
+                endpoints.MapGet("/Test/{name:alpha}/{age:range(18, 99)}", async context =>
+                {
+                    var name = context.Request.RouteValues["name"];
+                    var age = context.Request.RouteValues["age"];
+
+                    await context.Response.WriteAsync($"Test {name}! Age = {age}");
+                });
+
+                endpoints.MapGet("/{message:int}", async context =>
+                {
+                    var message = context.Request.RouteValues["message"];
+
+                    await context.Response.WriteAsync($"{message}");
+                });
+
+                endpoints.MapGet("/Lol/{id:customName}", async context =>
+                {
+                    await context.Response.WriteAsync($"Test test!");
+                });
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "admin",
+                    pattern: "admin/{controller}/{action=Index}");
+
+                endpoints.MapAreaControllerRoute(
+                    name: "store_area",
+                    areaName: "service",
+                    pattern: "service/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "identity",
+                    pattern: "identity/{controller}/{action=Index}");
+
+                endpoints.MapRazorPages();
+            });
+        }
+
+        #endregion
     }
 }

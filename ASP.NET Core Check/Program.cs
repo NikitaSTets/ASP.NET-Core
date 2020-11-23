@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -12,15 +13,18 @@ namespace ASP.NET_Core_Check
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var assemblyName = typeof(Startup).GetTypeInfo().Assembly.FullName;
+
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseSetting("https_port", "8080");
                     webBuilder.UseUrls("http://*:5000;http://localhost:5001;https://hostname:5002");
                     webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "CustomApplicationName");
 
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup(assemblyName);
                 })
                 .ConfigureHostConfiguration(configHost =>
                 {
@@ -35,5 +39,6 @@ namespace ASP.NET_Core_Check
                     var a = new[] { "SomeValue=321", "ValueTest=4" };
                     config.AddCommandLine(a);
                 });
+        }
     }
 }
