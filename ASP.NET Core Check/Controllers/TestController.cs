@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ASP.NET_Core_Check.Areas.Service.Controllers
+namespace ASP.NET_Core_Check.Controllers
 {
     public class TestController : Controller
     {
@@ -37,6 +37,13 @@ namespace ASP.NET_Core_Check.Areas.Service.Controllers
             return View("Index");
         }
 
+        [HttpGet]
+        public IActionResult CustomBindingTest(CustomModelBindingTest bindingTest)
+        {
+            var a = bindingTest;
+
+            return View("Index");
+        }
         //[AcceptVerbs("GET", "POST")]
         //[AllowAnonymous]
         //public IActionResult VerifyEmail(string email)

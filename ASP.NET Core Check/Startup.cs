@@ -4,6 +4,7 @@ using ASP.NET_Core_Check.Constraint;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.HealthCheck;
 using ASP.NET_Core_Check.Infrastructure;
+using ASP.NET_Core_Check.Infrastructure.CustomModelBinding;
 using ASP.NET_Core_Check.Infrastructure.HostedServices;
 using ASP.NET_Core_Check.Middlewares;
 using ASP.NET_Core_Check.Models;
@@ -116,6 +117,11 @@ namespace ASP.NET_Core_Check
             {
                 options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
                 options.AddPolicy("Founders", policy => policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
+            });
+
+            services.AddControllersWithViews(opts =>
+            {
+                opts.ModelBinderProviders.Insert(4, new TestModelBinderProvider());
             });
 
             services.AddDirectoryBrowser();
