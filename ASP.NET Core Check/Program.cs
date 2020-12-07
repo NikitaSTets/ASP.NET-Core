@@ -20,7 +20,6 @@ namespace ASP.NET_Core_Check
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseSetting("https_port", "8080");
                     webBuilder.UseUrls("http://*:5000;http://localhost:5001;https://hostname:5002");
                     webBuilder.UseSetting(WebHostDefaults.ApplicationKey, "CustomApplicationName");
 
@@ -34,6 +33,11 @@ namespace ASP.NET_Core_Check
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.Properties.Add("applicationName", "te");
+                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+                    var b = hostContext.Configuration.GetValue<string>("AppPreConfigurationTestSetting");
+
                     config.AddEnvironmentVariables("TestPrefix_");
 
                     var a = new[] { "SomeValue=321", "ValueTest=4" };

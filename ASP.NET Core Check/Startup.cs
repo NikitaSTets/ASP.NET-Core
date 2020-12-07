@@ -59,11 +59,18 @@ namespace ASP.NET_Core_Check
                 //.AddXmlSerializerFormatters()
                 .AddMvcOptions(options =>
                 {
-                    options.EnableEndpointRouting = false;
                     options.MaxModelValidationErrors = 50;
                     options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
                         _ => "The field is required.");
                 });
+
+            services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(60);
+                options.ExcludedHosts.Add("us.test.com");
+                options.ExcludedHosts.Add("www.Testexample.com");
+            });
 
             services.AddRouting(options =>
             {
@@ -121,7 +128,7 @@ namespace ASP.NET_Core_Check
 
             services.AddControllersWithViews(opts =>
             {
-                opts.ModelBinderProviders.Insert(4, new TestModelBinderProvider());
+                opts.ModelBinderProviders.Insert(0, new TestModelBinderProvider());
             });
 
             services.AddDirectoryBrowser();
@@ -175,8 +182,6 @@ namespace ASP.NET_Core_Check
             //app.UseDefaultFiles(options);
 
             //app.UseFileServer(enableDirectoryBrowsing: true); //UseDefaultFiles + UseStaticFiles
-
-            app.UseMvc();
 
             app.MapWhen(context => context.Request.Query.ContainsKey("branch"), HandleBranch);
 
@@ -341,8 +346,6 @@ namespace ASP.NET_Core_Check
             });
 
             app.UseHttpsRedirection();
-
-            app.UseMvc();
 
             app.MapWhen(context => context.Request.Query.ContainsKey("branch"), HandleBranch);
 

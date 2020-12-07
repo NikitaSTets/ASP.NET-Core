@@ -32,6 +32,26 @@ namespace ASP.NET_Core_Check.Controllers
             return View("Index", model);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult TestFromForm([FromForm] ModelValidationModel model)
+        {
+            var isValid = ModelState.IsValid;
+            var b = model.Email == "dsa";
+
+            return View("Index", model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult TestFromBody([FromBody] ModelValidationModel model)
+        {
+            var isValid = ModelState.IsValid;
+            var b = model.Email == "dsa";
+
+            return View("Index", model);
+        }
+
         public IActionResult Test()
         {
             return View("Index");
@@ -44,6 +64,8 @@ namespace ASP.NET_Core_Check.Controllers
 
             return View("Index");
         }
+
+
         //[AcceptVerbs("GET", "POST")]
         //[AllowAnonymous]
         //public IActionResult VerifyEmail(string email)
