@@ -23,15 +23,14 @@ namespace ASP.NET_Core_Check.Infrastructure.HostedServices
         {
             _logger.LogInformation("Startup Background Service is starting.");
 
-            // Simulate the effect of a long-running startup task.
             Task.Run(async () =>
             {
-                await Task.Delay(_delaySeconds * 1000);
+                await Task.Delay(_delaySeconds * 1000, cancellationToken);
 
                 _startupHostedServiceHealthCheck.StartupTaskCompleted = true;
 
                 _logger.LogInformation("Startup Background Service has started.");
-            });
+            }, cancellationToken);
 
             return Task.CompletedTask;
         }

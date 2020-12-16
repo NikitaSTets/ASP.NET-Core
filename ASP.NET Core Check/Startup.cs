@@ -88,7 +88,6 @@ namespace ASP.NET_Core_Check
 
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDbContext>(tags: new[] { "foo_tag" })
-                .AddSqlServer(Configuration["ConnectionStrings:DefaultConnection"], "SELECT * FROM [aspnet-core-check].[dbo].[AspNetUsers]", "test", HealthStatus.Healthy, new[] { "example_tag" })
                 .AddCheck<ExampleHealthCheck>("example_health_check", HealthStatus.Unhealthy, new[] { "example_tag" })
                 .AddCheck("Foo", () => HealthCheckResult.Healthy("Foo is OK!"), tags: new[] { "foo_tag" })
                 .AddCheck("Bar", () => HealthCheckResult.Unhealthy("Bar is unhealthy!"), tags: new[] { "bar_tag" })
@@ -98,7 +97,7 @@ namespace ASP.NET_Core_Check
             services.Configure<HealthCheckPublisherOptions>(options =>
             {
                 options.Delay = TimeSpan.FromSeconds(2);
-                options.Predicate = (check) => check.Tags.Contains("ready");
+                options.Predicate = check => check.Tags.Contains("ready");
             });
 
             services.AddSingleton<IHealthCheckPublisher, ReadinessPublisher>();
@@ -262,7 +261,6 @@ namespace ASP.NET_Core_Check
                     Predicate = (_) => false
                 });
 
-
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller:slugify=Home}/{action:slugify=Index}/{id?}");
@@ -273,7 +271,7 @@ namespace ASP.NET_Core_Check
                     var age = context.Request.RouteValues["age"];
 
                     await context.Response.WriteAsync($"Test {name}! Age = {age}");
-                });
+                }).RequireAuthorization();
 
                 //endpoints.MapGet("/{message}", async context =>
                 //{
@@ -340,7 +338,7 @@ namespace ASP.NET_Core_Check
                     var errorFeature = context.Features.Get<IExceptionHandlerPathFeature>();
                     var exception = errorFeature.Error; //you may want to check what
                                                         //the exception is
-                        var path = errorFeature.Path;
+                    var path = errorFeature.Path;
                     await context.Response.WriteAsync("Error: " + exception.Message);
                 });
             });

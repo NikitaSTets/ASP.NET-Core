@@ -16,8 +16,7 @@ namespace ASP.NET_Core_Check.HealthCheck
         }
 
 
-        public Task PublishAsync(HealthReport report,
-            CancellationToken cancellationToken)
+        public Task PublishAsync(HealthReport report, CancellationToken cancellationToken)
         {
             if (report.Status == HealthStatus.Healthy)
             {
