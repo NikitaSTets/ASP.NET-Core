@@ -3,16 +3,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace ASP.NET_Core_Check.Middlewares
 {
-    public class TestTokenMiddleware
+    public class TestTokenMiddleware : IMiddleware
     {
-        private readonly RequestDelegate _next;
-
-        public TestTokenMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var token = context.Request.Query["token"];
             if (token == "12345678")
@@ -22,7 +15,7 @@ namespace ASP.NET_Core_Check.Middlewares
             }
             else
             {
-                await _next.Invoke(context);
+                await next.Invoke(context);
             }
         }
     }

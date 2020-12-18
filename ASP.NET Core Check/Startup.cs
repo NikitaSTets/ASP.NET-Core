@@ -131,6 +131,8 @@ namespace ASP.NET_Core_Check
             });
 
             services.AddDirectoryBrowser();
+
+            services.AddTransient<TestTokenMiddleware>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
