@@ -5,6 +5,7 @@
 
 @using (Html.BeginForm(nameof(AccountController.PerformLogin), "Account", FormMethod.Post))
 {
+    @Html.AntiForgeryToken()
     <fieldset>
         <p>Username:</p>
         <p><input type="text" name="username" /></p>

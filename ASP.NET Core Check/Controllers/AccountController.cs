@@ -35,7 +35,7 @@ namespace ASP.NET_Core_Check.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> PerformLogin(string username,
             string password, string returnUrl)
         {
@@ -55,7 +55,7 @@ namespace ASP.NET_Core_Check.Controllers
             return View("Login");
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
