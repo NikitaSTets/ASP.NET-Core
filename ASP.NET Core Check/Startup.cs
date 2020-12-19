@@ -4,13 +4,15 @@ using ASP.NET_Core_Check.Constraint;
 using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.HealthCheck;
 using ASP.NET_Core_Check.Infrastructure;
+using ASP.NET_Core_Check.Infrastructure.Authorization;
+using ASP.NET_Core_Check.Infrastructure.Authorization.Requirements;
 using ASP.NET_Core_Check.Infrastructure.CustomModelBinding;
 using ASP.NET_Core_Check.Infrastructure.HostedServices;
 using ASP.NET_Core_Check.Middlewares;
 using ASP.NET_Core_Check.Models;
 using ASP.NET_Core_Check.ParameterTransformers;
 using ASP.NET_Core_Check.Services;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -24,6 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using AppConstants = ASP.NET_Core_Check.Constants.Constants;
 
 namespace ASP.NET_Core_Check
 {
@@ -134,9 +137,12 @@ namespace ASP.NET_Core_Check
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
-                options.AddPolicy("Founders", policy => policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
+                options.AddPolicy(AppConstants.Policies.EmployeeOnly, policy => policy.RequireClaim("EmployeeNumber"));
+                options.AddPolicy(AppConstants.Policies.Founders, policy => policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
+                options.AddPolicy(AppConstants.Policies.MinimumAge21, policy => policy.Requirements.Add(new MinimumAgeRequirement(21)));
             });
+
+            services.AddSingleton<IAuthorizationHandler, MinimumAgeRequirementHandler>();
 
             services.AddControllersWithViews(opts =>
             {

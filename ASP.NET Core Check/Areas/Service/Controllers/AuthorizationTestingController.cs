@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AppConstants = ASP.NET_Core_Check.Constants.Constants;
 
 namespace ASP.NET_Core_Check.Areas.Service.Controllers
 {
@@ -17,14 +18,20 @@ namespace ASP.NET_Core_Check.Areas.Service.Controllers
             return View();
         }
 
-        [Authorize(Policy = "EmployeeOnly")]
+        [Authorize(Policy = AppConstants.Policies.EmployeeOnly)]
         public IActionResult EmployeeOnly()
         {
             return View();
         }
 
-        [Authorize(Policy = "Founders")]
+        [Authorize(Policy = AppConstants.Policies.Founders)]
         public IActionResult Founders()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = AppConstants.Policies.MinimumAge21)]
+        public IActionResult MinimumAgeTest()
         {
             return View();
         }
