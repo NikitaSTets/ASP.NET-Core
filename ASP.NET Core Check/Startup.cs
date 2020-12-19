@@ -117,7 +117,20 @@ namespace ASP.NET_Core_Check
                     options.Lockout.MaxFailedAccessAttempts = 10;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders()
                 .AddDefaultUI();
+
+            services.AddAuthentication()
+                .AddCookie(options =>
+                {
+                    options.AccessDeniedPath = new PathString("/Identity/Account/AccessDenied");
+                })
+                .AddGoogle(options =>
+                {
+                    var googleAuthNSection = Configuration.GetSection("Authentication:Google");
+                    options.ClientId = googleAuthNSection["ClientId"];
+                    options.ClientSecret = googleAuthNSection["ClientSecret"];
+                });
 
             services.AddAuthorization(options =>
             {
