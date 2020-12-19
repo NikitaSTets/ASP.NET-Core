@@ -6,6 +6,17 @@ namespace ASP.NET_Core_Check.Areas.Service.Controllers
 {
     public class AuthorizationTestingController : Controller
     {
+        [Authorize]
+        public IActionResult DefaultAuthorize()
+        {
+            return View();
+        }
+
+        public IActionResult FallbackAuthorize()
+        {
+            return View();
+        }
+
         [Authorize(AuthenticationSchemes = "Google")]
         public IActionResult Admin()
         {

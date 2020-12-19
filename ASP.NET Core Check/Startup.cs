@@ -124,10 +124,6 @@ namespace ASP.NET_Core_Check
                 .AddDefaultUI();
 
             services.AddAuthentication()
-                .AddCookie(options =>
-                {
-                    options.AccessDeniedPath = new PathString("/Identity/Account/AccessDenied");
-                })
                 .AddGoogle(options =>
                 {
                     var googleAuthNSection = Configuration.GetSection("Authentication:Google");
@@ -137,6 +133,8 @@ namespace ASP.NET_Core_Check
 
             services.AddAuthorization(options =>
             {
+                //options.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireRole("Admin").Build();
+                //options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireUserName("NikitaStets").Build();
                 options.AddPolicy(AppConstants.Policies.EmployeeOnly, policy => policy.RequireClaim("EmployeeNumber"));
                 options.AddPolicy(AppConstants.Policies.Founders, policy => policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
                 options.AddPolicy(AppConstants.Policies.MinimumAge21, policy => policy.Requirements.Add(new MinimumAgeRequirement(21)));

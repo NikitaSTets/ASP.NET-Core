@@ -54,12 +54,5 @@ namespace ASP.NET_Core_Check.Controllers
 
             return RedirectToRoute("Default");
         }
-
-        public IActionResult AccessDenied()
-        {
-            var a = _options.Value;
-
-            return Redirect("/Identity/Account/AccessDenied");
-        }
     }
 }
