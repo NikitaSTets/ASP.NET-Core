@@ -122,7 +122,8 @@ namespace ASP.NET_Core_Check
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
-                .AddDefaultUI();
+                .AddDefaultUI()
+                .AddClaimsPrincipalFactory<MyUserClaimsPrincipalFactory>();
 
             services.AddAuthentication()
                 .AddGoogle(options =>

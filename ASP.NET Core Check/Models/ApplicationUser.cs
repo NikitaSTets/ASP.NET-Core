@@ -25,5 +25,8 @@ namespace ASP.NET_Core_Check.Models
 
         [PersonalData]
         public DateTime? Birthday { get; set; }
+
+        [PersonalData]
+        public string ContactName { get; set; }
     }
 }
