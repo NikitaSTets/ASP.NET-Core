@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ASP.NET_Core_Check.Infrastructure.Authorization.Requirements;
 using Microsoft.AspNetCore.Authorization;
 
-namespace ASP.NET_Core_Check.Infrastructure.Authorization
+namespace ASP.NET_Core_Check.Infrastructure.Authorization.Handlers
 {
     public class MinimumAgeRequirementHandler : AuthorizationHandler<MinimumAgeRequirement>
     {

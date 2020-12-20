@@ -5,6 +5,7 @@ using ASP.NET_Core_Check.Filters;
 using ASP.NET_Core_Check.HealthCheck;
 using ASP.NET_Core_Check.Infrastructure;
 using ASP.NET_Core_Check.Infrastructure.Authorization;
+using ASP.NET_Core_Check.Infrastructure.Authorization.Handlers;
 using ASP.NET_Core_Check.Infrastructure.Authorization.Requirements;
 using ASP.NET_Core_Check.Infrastructure.CustomModelBinding;
 using ASP.NET_Core_Check.Infrastructure.HostedServices;
@@ -138,9 +139,11 @@ namespace ASP.NET_Core_Check
                 options.AddPolicy(AppConstants.Policies.EmployeeOnly, policy => policy.RequireClaim("EmployeeNumber"));
                 options.AddPolicy(AppConstants.Policies.Founders, policy => policy.RequireClaim("EmployeeNumber", "1", "2", "3", "4", "5"));
                 options.AddPolicy(AppConstants.Policies.MinimumAge21, policy => policy.Requirements.Add(new MinimumAgeRequirement(21)));
+                options.AddPolicy(AppConstants.Policies.CanAccessToRoom, policyBuilder => policyBuilder.AddRequirements(new RoomAccessRequirement()));
             });
 
             services.AddSingleton<IAuthorizationHandler, MinimumAgeRequirementHandler>();
+            services.AddSingleton<IAuthorizationHandler, RoomAccessEmployeeAuthorizationHandler>();
 
             services.AddControllersWithViews(opts =>
             {

@@ -7,6 +7,7 @@
             public const string MinimumAge21 = "MinimumAge21";
             public const string EmployeeOnly = "EmployeeOnly";
             public const string Founders = "Founders";
+            public const string CanAccessToRoom = "CanAccessToRoom";
         }
     }
 }
