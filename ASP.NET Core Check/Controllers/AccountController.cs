@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using ASP.NET_Core_Check.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -22,19 +23,24 @@ namespace ASP.NET_Core_Check.Controllers
         }
 
 
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
-            return View();
+            var accountLoginViewModel = new AccountLoginViewModel
+            {
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+            };
+
+            return View(accountLoginViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PerformLogin(string username, string password, string returnUrl)
+        public async Task<IActionResult> PerformLogin(AccountLoginViewModel accountLoginViewModel)
         {
-            var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: true, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(accountLoginViewModel.UserName, accountLoginViewModel.Password, isPersistent: true, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                return LocalRedirect(returnUrl);
+                return LocalRedirect(accountLoginViewModel.ReturnUrl);
             }
 
             if (!result.IsLockedOut)
