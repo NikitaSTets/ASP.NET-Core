@@ -122,7 +122,6 @@ namespace ASP.NET_Core_Check
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
-                .AddDefaultUI()
                 .AddClaimsPrincipalFactory<MyUserClaimsPrincipalFactory>();
 
             services.AddAuthentication()
