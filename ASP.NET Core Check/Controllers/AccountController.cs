@@ -23,11 +23,12 @@ namespace ASP.NET_Core_Check.Controllers
         }
 
 
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(string returnUrl)
         {
             var accountLoginViewModel = new AccountLoginViewModel
             {
-                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList(),
+                ReturnUrl = returnUrl
             };
 
             return View(accountLoginViewModel);
@@ -37,7 +38,7 @@ namespace ASP.NET_Core_Check.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PerformLogin(AccountLoginViewModel accountLoginViewModel)
         {
-            var result = await _signInManager.PasswordSignInAsync(accountLoginViewModel.UserName, accountLoginViewModel.Password, isPersistent: true, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(accountLoginViewModel.Email, accountLoginViewModel.Password, isPersistent: accountLoginViewModel.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
                 return LocalRedirect(accountLoginViewModel.ReturnUrl);
@@ -59,6 +60,11 @@ namespace ASP.NET_Core_Check.Controllers
             await _signInManager.SignOutAsync();
 
             return RedirectToRoute("Default");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

@@ -1,21 +1,40 @@
 ﻿@using ASP.NET_Core_Check.Controllers
+@model ASP.NET_Core_Check.Models.AccountLoginViewModel
 @{
     Layout = "_Layout";
 }
 
-@using (Html.BeginForm(nameof(AccountController.PerformLogin), "Account", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-<fieldset>
-    <p>Username:</p>
-    <p><input type="text" name="username" /></p>
-    <p>Password:</p>
-    <p><input type="password" name="password" /></p>
-    <p>
-        Remember me: <input type="checkbox" name="isPersistent"
-                            value="true" />
-    </p>
-    <input type="hidden" name="ReturnUrl" value="@Context.Request.Query["ReturnUrl"]" />
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            @using (Html.BeginForm(nameof(AccountController.PerformLogin), "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <h4>Use a local account to log in.</h4>
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email)
+                    @Html.TextBox(nameof(Model.Email))
+                    <span asp-validation-for=" Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password)
+                    @Html.TextBox(nameof(Model.Password))
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        @Html.LabelFor(m => m.RememberMe)
+                        @Html.CheckBoxFor(m => m.RememberMe)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Log in</button>
+                </div>
+            }
+        </section>
+    </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
             <h4>Use another service to log in.</h4>
@@ -32,7 +51,9 @@
                 }
                 else
                 {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                    @using (Html.BeginForm(nameof(ExternalAccountController.ExternalLogin), "ExternalAccount", new { returnUrl = Model.ReturnUrl }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
                         <div>
                             <p>
                                 @foreach (var provider in Model.ExternalLogins)
@@ -41,11 +62,13 @@
                                 }
                             </p>
                         </div>
-                    </form>
+                    }
                 }
             }
         </section>
     </div>
+</div>
 
-</fieldset>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>ASP.NET_Core_Check</RootNamespace>
+    <AssemblyName>ASP.NET Core Check</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="MyStaticFiles\css\site.css" />
+    <None Remove="MyStaticFiles\Images\red-rose.jpg" />
+    <None Remove="MyStaticFiles\Images\rose.image" />
+    <None Remove="MyStaticFiles\red-rose.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MyStaticFiles\css\site.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="MyStaticFiles\Images\rose.image" />
+    <Content Include="MyStaticFiles\Images\red-rose.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Service\Data\" />
+    <Folder Include="Areas\Service\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="3.1.1" />
+    <PackageReference Include="jQuery" Version="3.5.1" />
+    <PackageReference Include="jQuery.Validation" Version="1.19.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.HealthChecks" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+  </ItemGroup>
+
+
+
+</Project>
